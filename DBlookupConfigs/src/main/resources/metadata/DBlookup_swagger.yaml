@@ -1,0 +1,21 @@
+openapi: 3.0.1
+info:
+  title: DBlookup
+  description: API Definition of DBlookup
+  version: 1.0.0
+servers:
+- url: http://localhost:8290/database
+paths:
+  /result:
+    get:
+      parameters:
+      - name: a
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: Default response

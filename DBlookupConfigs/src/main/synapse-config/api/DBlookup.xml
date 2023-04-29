@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/database" name="DBlookup" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="GET" uri-template="/result?a={value}">
+        <inSequence>
+            <dblookup>
+                <connection>
+                    <pool>
+                        <driver>com.mysql.cj.jdbc.Driver</driver>
+                        <url>jdbc:mysql://localhost:3306/students</url>
+                        <user>root</user>
+                        <password>admin</password>
+                    </pool>
+                </connection>
+                <statement>
+                    <sql><![CDATA[SELECT * FROM info where id = ?]]></sql>
+                    <parameter expression="$url:a" type="INTEGER"/>
+                    <result column="last_name" name="last_name"/>
+                    <result column="id" name="id"/>
+                    <result column="middle_name" name="middle_name"/>
+                    <result column="first_name" name="first_name"/>
+                    <result column="age" name="age"/>
+                </statement>
+            </dblookup>
+            <payloadFactory media-type="text">
+                <format>{&#xd;
+"id": $1,&#xd;
+"first name":$2,&#xd;
+"middle name": $3,&#xd;
+"last name": $4,&#xd;
+"age":$5&#xd;
+}</format>
+                <args>
+                    <arg evaluator="xml" expression="get-property('id')"/>
+                    <arg evaluator="xml" expression="get-property('first_name')"/>
+                    <arg evaluator="xml" expression="get-property('middle_name')"/>
+                    <arg evaluator="xml" expression="get-property('last_name')"/>
+                    <arg evaluator="xml" expression="get-property('age')"/>
+                </args>
+            </payloadFactory>
+            <log level="custom">
+                <property expression="$url:a" name="value"/>
+            </log>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+</api>
